@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 function HomeScreen(){
 
 	# user display
@@ -44,8 +43,6 @@ function HomeScreen(){
 
 	esac
 }
-
-
 
 function MainScreen(){
 	echo "********************************************************************************"
@@ -122,13 +119,10 @@ function MainScreen(){
 
 	esac
 
-
 }
-
 
 #read list of authorized users
 #delete all users not on it. and change administrator positions
-
 function UserManagement(){
 	echo "********************************************************************************"
 	echo "********************************************************************************"
@@ -180,10 +174,7 @@ function UserManagement(){
 			;;
 	esac
 
-
-
 }
-
 
 function AutomaticUpdates(){
 	echo "********************************************************************************"
@@ -229,8 +220,6 @@ function AutomaticUpdates(){
 			MainScreen
 			;;
 
-
-
 		* )
 
 			Automatic Updates
@@ -238,11 +227,7 @@ function AutomaticUpdates(){
 
 	esac
 
-
-
 }
-
-
 
 function MediaRemoval(){
 	echo "********************************************************************************"
@@ -285,10 +270,7 @@ function MediaRemoval(){
 
 	esac
 
-
 }
-
-
 
 function UnauthorizedSoftware(){
 	echo "********************************************************************************"
@@ -335,8 +317,6 @@ function UnauthorizedSoftware(){
 
 }
 
-
-
 function GuestRemoval(){
 
 	echo "********************************************************************************"
@@ -379,10 +359,7 @@ function GuestRemoval(){
 
 	esac
 
-
 }
-
-
 
 function DisableRoot(){
 
@@ -428,7 +405,6 @@ function DisableRoot(){
 	esac
 
 }
-
 
 function OpenSSH(){
 
@@ -477,14 +453,11 @@ function OpenSSH(){
 
 }
 
-
 function Firewall(){
 	sudo ufw enable
 	MainScreen
 }
 	
-
-
 function AreYouSure(){
 
 	echo "********************************************************************************"
@@ -530,7 +503,4 @@ function AreYouSure(){
 
 }
 
-
-
 HomeScreen
-
