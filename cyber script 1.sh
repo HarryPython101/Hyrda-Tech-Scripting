@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-#this is a gay test
 function HomeScreen(){
 
 	# user display
