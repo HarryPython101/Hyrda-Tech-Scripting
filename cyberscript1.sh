@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 
-
 function HomeScreen(){
 
 	# user display
@@ -46,6 +45,8 @@ function HomeScreen(){
 	esac
 }
 
+
+
 function MainScreen(){
 	echo "********************************************************************************"
 	echo "********************************************************************************"
@@ -61,8 +62,8 @@ function MainScreen(){
 	echo "*//////////////////////////////5. Guest Removal        ////////////////////////*"
 	echo "*//////////////////////////////6. Disable Root         ////////////////////////*"
 	echo "*//////////////////////////////7. Open SSH             ////////////////////////*"
-	echo "*//////////////////////////////8. Firewall             ////////////////////////*"	
-	echo "*//////////////////////////////X. Exit Program         ////////////////////////*"
+	echo "*//////////////////////////////8. Firewall             ////////////////////////*"	echo "*//////////////////////////////X. Exit Program         ////////////////////////*"
+
 	echo "*                                                                              *"
 	echo "*                                                                              *"
 	echo "*                                                                              *"
@@ -121,10 +122,13 @@ function MainScreen(){
 
 	esac
 
+
 }
+
 
 #read list of authorized users
 #delete all users not on it. and change administrator positions
+
 function UserManagement(){
 	echo "********************************************************************************"
 	echo "********************************************************************************"
@@ -176,7 +180,10 @@ function UserManagement(){
 			;;
 	esac
 
+
+
 }
+
 
 function AutomaticUpdates(){
 	echo "********************************************************************************"
@@ -215,13 +222,14 @@ function AutomaticUpdates(){
 			sudo apt-get upgrade
 			sudo apt-get install unattended-upgrades			
 			echo "enable auto updates"
-			MainScreen
 			;;
 
 		"n" | "N" | "No" | "NO" | "no" )
 
 			MainScreen
 			;;
+
+
 
 		* )
 
@@ -230,7 +238,11 @@ function AutomaticUpdates(){
 
 	esac
 
+
+
 }
+
+
 
 function MediaRemoval(){
 	echo "********************************************************************************"
@@ -273,7 +285,10 @@ function MediaRemoval(){
 
 	esac
 
+
 }
+
+
 
 function UnauthorizedSoftware(){
 	echo "********************************************************************************"
@@ -309,8 +324,8 @@ function UnauthorizedSoftware(){
 		"Y" | "Yes" | "yes" | "y" )
 			sudo service pure-ftpd stop
 			sudo apt-get autoremove pure-ftpd
+			sudo apt-get autoremove nmap
 			echo "other software"
-			MainScreen
 			;;
 
 		* )
@@ -320,6 +335,8 @@ function UnauthorizedSoftware(){
 	esac
 
 }
+
+
 
 function GuestRemoval(){
 
@@ -355,7 +372,6 @@ function GuestRemoval(){
 
 		"Y" | "Yes" | "yes" | "y" )
 			echo "remove guest account"
-			MainScreen
 			;;
 
 		* )
@@ -364,7 +380,10 @@ function GuestRemoval(){
 
 	esac
 
+
 }
+
+
 
 function DisableRoot(){
 
@@ -411,6 +430,7 @@ function DisableRoot(){
 
 }
 
+
 function OpenSSH(){
 
 	echo "********************************************************************************"
@@ -448,7 +468,6 @@ function OpenSSH(){
 			sudo apt-get update
 			sudo apt-get install openssh-server
 			sudo systemctl enable ssh
-			MainScreen
 			;;
 
 		* )
@@ -459,11 +478,14 @@ function OpenSSH(){
 
 }
 
+
 function Firewall(){
 	sudo ufw enable
 	MainScreen
 }
 	
+
+
 function AreYouSure(){
 
 	echo "********************************************************************************"
@@ -509,4 +531,7 @@ function AreYouSure(){
 
 }
 
+
+
 HomeScreen
+
