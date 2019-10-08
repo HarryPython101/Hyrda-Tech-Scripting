@@ -59,9 +59,9 @@ function MainScreen(){
 	echo "*//////////////////////////////5. Guest Removal        ////////////////////////*"
 	echo "*//////////////////////////////6. Disable Root         ////////////////////////*"
 	echo "*//////////////////////////////7. Open SSH             ////////////////////////*"
-	echo "*//////////////////////////////8. Firewall             ////////////////////////*"	
+	echo "*//////////////////////////////8. Firewall             ////////////////////////*"
+	echo "*//////////////////////////////9. Password Policy      ////////////////////////*"
 	echo "*//////////////////////////////X. Exit Program         ////////////////////////*"
-	echo "*                                                                              *"
 	echo "*                                                                              *"
 	echo "*                                                                              *"
 	echo "*                                                                              *"
@@ -108,7 +108,9 @@ function MainScreen(){
 			Firewall
 			;;
 
-
+		9 )
+			PasswordPolicy
+			;;
 		[xX] )
 			AreYouSure
 			;;
@@ -468,7 +470,64 @@ function Firewall(){
 	sudo ufw enable
 	MainScreen
 }
-	
+
+
+function PasswordPolicy(){
+
+	echo "********************************************************************************"
+	echo "********************************************************************************"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "*///////////////////////////Enforce Password Policys?//////////////////////////*"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "*////////////////////////////////////Yes/no////////////////////////////////////*"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "*                                                                              *"
+	echo "********************************************************************************"
+	echo "********************************************************************************"
+
+
+	passAns=" "
+
+		read passAns
+
+		case $passAns in
+
+			"Y" | "Yes" | "yes" | "y" )
+
+			sudo apt-get install libpam-cracklib
+
+			sed 's/# password	[success=1 default=ignore]	pam_unix.so obscure sha512/password	[success=1 default=ignore]	pam_unix.so obscure sha512 remember=5 minlen=8/' /etc/pam.d/common‐password
+
+			sed 's/# password	requisite			pam_cracklib.so retry=3 minlen=8 difok=3 /password	requisite			pam_cracklib.so retry=3 minlen=8 difok=3 ucredit=‐1 lcredit=‐1 dcredit=‐1 ocredit=‐1' /etc/pam.d/common‐password
+
+
+				;;
+
+			* )
+				MainScreen
+				;;
+
+		esac
+
+
+
+
+}
+
 function AreYouSure(){
 
 	echo "********************************************************************************"
