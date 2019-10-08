@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-
-
 function HomeScreen(){
 
 	# user display
@@ -166,6 +164,8 @@ function UserManagement(){
 
 		3 )
 			echo "Change Admin Access"
+
+			MainScreen
 			;;
 
 		4 )
@@ -265,6 +265,8 @@ function MediaRemoval(){
 
 		"Y" | "Yes" | "yes" | "y" )
 			echo "remove the media"
+
+			MainScreen
 			;;
 
 		* )
@@ -354,7 +356,7 @@ function GuestRemoval(){
 	case $guestAns in
 
 		"Y" | "Yes" | "yes" | "y" )
-			echo "remove guest account"
+			echo "allow-guest=false" >> /etc/lightdm/lightdm.conf
 			MainScreen
 			;;
 
@@ -400,7 +402,10 @@ function DisableRoot(){
 	case $rootAns in
 
 		"Y" | "Yes" | "yes" | "y" )
-			echo "disable root"
+		
+			sed 's/# PermitRootLogin Yes/PermitRootLogin no/' /etc/ssh/sshd_config
+
+			MainScreen
 			;;
 
 		* )
