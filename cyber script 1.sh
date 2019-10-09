@@ -3,6 +3,8 @@
 function HomeScreen(){
 
 	cd ~
+	sudo unalias -a
+
 	
 	# user display
 	echo "********************************************************************************"
@@ -236,6 +238,10 @@ function AutomaticUpdates(){
 			sudo apt-get upgrade
 			sudo apt-get dist-upgrade
 			sudo apt-get install --only-upgrade bash --force-yes -y
+			sudo apt-get install -f --force-yes -y
+			sudo apt-get autoremove --force-yes -y
+			sudo apt-get autoclean --force-yes -y
+			sudo apt-get check
 
 			apt_config=/etc/apt/apt.conf.d/10periodic
 			echo "APT::Periodic::Update-Package-Lists \"1\";" > $apt_config
