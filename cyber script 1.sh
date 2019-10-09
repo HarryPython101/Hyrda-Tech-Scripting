@@ -2,6 +2,8 @@
 
 function HomeScreen(){
 
+	cd ~
+	
 	# user display
 	echo "********************************************************************************"
 	echo "********************************************************************************"
@@ -34,6 +36,8 @@ function HomeScreen(){
 	case $homeAns in
 
 		1 )
+			sudo apt-get update
+
 			MainScreen
 			;;
 
@@ -165,7 +169,23 @@ function UserManagement(){
 			;;
 
 		3 )
-			echo "Change Admin Access"
+			for x in `cat users`
+			do
+				read -p "Is $x considered an admin?[y/n]: " a
+				if [ $a = y ]
+					then
+						##Adds to the adm group
+						sudo usermod -a -G adm $x
+						##Adds to the sudo group
+						sudo usermod -a -G sudo $x
+					else
+						##Removes from the adm group
+						sudo deluser $x adm
+
+						##Removes from the sudo group
+						sudo deluser $x sudo
+				fi
+			done
 
 			MainScreen
 			;;
@@ -213,8 +233,12 @@ function AutomaticUpdates(){
 
 		"Y" | "Yes" | "yes" | "y" )
 
-			sudo apt-get update
 			sudo apt-get upgrade
+			sudo apt-get dist-upgrade
+			sudo apt-get install --only-upgrade bash
+
+			echo "Enable auto updates"
+
 			sudo apt-get install unattended-upgrades			
 			echo "enable auto updates"
 			MainScreen
@@ -266,7 +290,22 @@ function MediaRemoval(){
 	case $fileAns in
 
 		"Y" | "Yes" | "yes" | "y" )
-			echo "remove the media"
+			find / -name '*.mp3' -type f -delete
+    		find / -name '*.mov' -type f -delete
+ 			find / -name '*.mp4' -type f -delete
+    		find / -name '*.avi' -type f -delete
+    		find / -name '*.mpg' -type f -delete
+    		find / -name '*.mpeg' -type f -delete
+			find / -name '*.flac' -type f -delete
+			find / -name '*.m4a' -type f -delete
+    		find / -name '*.flv' -type f -delete
+    		find / -name '*.ogg' -type f -delete
+			find /home -name '*.gif' -type f -delete
+			find /home -name '*.png' -type f -delete
+    		find /home -name '*.jpg' -type f -delete
+    		find /home -name '*.jpeg' -type f -delete
+			
+			echo "Removed the media"
 
 			MainScreen
 			;;
@@ -313,6 +352,33 @@ function UnauthorizedSoftware(){
 		"Y" | "Yes" | "yes" | "y" )
 			sudo service pure-ftpd stop
 			sudo apt-get autoremove pure-ftpd
+			sudo apt-get autoremove nmap
+			sudo apt-get purge qbittorrent 
+			sudo apt-get purge utorrent 
+			sudo apt-get purge ctorrent 
+			sudo apt-get purge ktorrent 
+			sudo apt-get purge rtorrent 
+			sudo apt-get purge deluge 
+			sudo apt-get purge transmission-gtk
+			sudo apt-get purge transmission-common 
+			sudo apt-get purge tixati 
+			sudo apt-get purge frostwise 
+			sudo apt-get purge vuze 
+			sudo apt-get purge irssi
+			sudo apt-get purge talk 
+			sudo apt-get purge telnet
+				#Remove pentesting
+			sudo apt-get purge wireshark 
+			sudo apt-get purge nmap 
+			sudo apt-get purge john 
+			sudo apt-get purge netcat 
+			sudo apt-get purge netcat-openbsd 
+			sudo apt-get purge netcat-traditional 
+			sudo apt-get purge netcat-ubuntu 
+			sudo apt-get purge netcat-minimal
+				#cleanup	 
+			sudo apt-get autoremove
+
 			echo "other software"
 			MainScreen
 			;;
@@ -405,8 +471,7 @@ function DisableRoot(){
 
 		"Y" | "Yes" | "yes" | "y" )
 		
-			sed 's/# PermitRootLogin Yes/PermitRootLogin no/' /etc/ssh/sshd_config
-
+			echo "remove root"
 			MainScreen
 			;;
 
@@ -452,7 +517,6 @@ function OpenSSH(){
 	case $exitAns in
 
 		"Y" | "Yes" | "yes" | "y" )
-			sudo apt-get update
 			sudo apt-get install openssh-server
 			sudo systemctl enable ssh
 			MainScreen
@@ -468,6 +532,10 @@ function OpenSSH(){
 
 function Firewall(){
 	sudo ufw enable
+	sudo ufw deny 23
+    sudo ufw deny 2049
+    sudo ufw deny 515
+    sudo ufw deny 111
 	MainScreen
 }
 
@@ -509,12 +577,10 @@ function PasswordPolicy(){
 			"Y" | "Yes" | "yes" | "y" )
 
 			sudo apt-get install libpam-cracklib
-
-			sed 's/# password	[success=1 default=ignore]	pam_unix.so obscure sha512/password	[success=1 default=ignore]	pam_unix.so obscure sha512 remember=5 minlen=8/' /etc/pam.d/common‐password
-
-			sed 's/# password	requisite			pam_cracklib.so retry=3 minlen=8 difok=3 /password	requisite			pam_cracklib.so retry=3 minlen=8 difok=3 ucredit=‐1 lcredit=‐1 dcredit=‐1 ocredit=‐1' /etc/pam.d/common‐password
-
-
+			
+			echo "still need to do this"
+			
+			MainScreen
 				;;
 
 			* )
