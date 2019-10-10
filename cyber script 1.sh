@@ -652,12 +652,7 @@ function PasswordPolicy(){
 			else
 				sudo perl -pi -e 's/^PASS_WARN_AGE.*/PASS_WARN_AGE 14/g' /etc/login.defs
 			fi
-
-			cat /etc/passwd|awk -F\: '{print $1}'|xargs -I {} sudo chage -m 7 -M 90 -I 10 -W 14 {}
-			else
-				echo "READ THE SCENARIO"
-				exit
-			fi			
+		
 			MainScreen
 				;;
 
