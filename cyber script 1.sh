@@ -481,7 +481,13 @@ function DisableRoot(){
 
 		"Y" | "Yes" | "yes" | "y" )
 		
-			echo "remove root"
+			rootExitsts=$(grep PermitRootLogin /etc/ssh/sshd_config|wc -l)
+
+			if [ $rootExists -eq 0 ]; then
+				sudo bash -c 'echo "PermitRootLogin no" >> /etc/ssh/shd_config'
+			else
+				sudo perl -pi -e 's/.*PermitRootLogin*/PermitRootLogin no/g' /etc/ssh/sshd_config
+			fi
 			MainScreen
 			;;
 
