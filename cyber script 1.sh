@@ -164,30 +164,16 @@ function UserManagement(){
 
 		1 )
 			echo "Delete Unauthorized Users"
+			MainScreen
 			;;
 
 		2 )
 			echo "Change Passwords"
+			MainScreen
 			;;
 
 		3 )
-			for x in `cat users`
-			do
-				read -p "Is $x considered an admin?[y/n]: " a
-				if [ $a = y ]
-					then
-						##Adds to the adm group
-						sudo usermod -a -G adm $x
-						##Adds to the sudo group
-						sudo usermod -a -G sudo $x
-					else
-						##Removes from the adm group
-						sudo deluser $x adm
-
-						##Removes from the sudo group
-						sudo deluser $x sudo
-				fi
-			done
+			echo "Admin Access"
 
 			MainScreen
 			;;
@@ -236,18 +222,23 @@ function AutomaticUpdates(){
 		"Y" | "Yes" | "yes" | "y" )
 
 			sudo apt-get upgrade
-			sudo apt-get dist-upgrade
 			sudo apt-get install --only-upgrade bash --force-yes -y
 			sudo apt-get install -f --force-yes -y
 			sudo apt-get autoremove --force-yes -y
 			sudo apt-get autoclean --force-yes -y
 			sudo apt-get check
+			
+			sudo apt-get install perl --force-yes -y
 
+			sudo perl -pi -e 's/"${distro_id}:"*/Ubuntu xenial-security/g' /etc/apt/apt.conf.d/50unattended-upgrades
+			
 			apt_config=/etc/apt/apt.conf.d/10periodic
 			echo "APT::Periodic::Update-Package-Lists \"1\";" > $apt_config
 			echo "APT::Periodic::Download-Upgradeable-Packages \"1\";" >> $apt_config
-			echo "APT::Periodic::AutocleanInterval \"0\";" >> $apt_config
+			echo "APT::Periodic::AutocleanInterval \"7\";" >> $apt_config
 			echo "APT::Periodic::Unattended-Upgrade \"1\";" >> $apt_config
+
+			sudo apt-get dist-upgrade
 
 			sudo apt-get install unattended-upgrades --force-yes -y	
 
@@ -360,36 +351,39 @@ function UnauthorizedSoftware(){
 	case $softAns in
 
 		"Y" | "Yes" | "yes" | "y" )
+
+				#miscellaneous
 			sudo service pure-ftpd stop
-			sudo apt-get autoremove pure-ftpd
-			sudo apt-get autoremove nmap
-			sudo apt-get purge qbittorrent 
-			sudo apt-get purge utorrent 
-			sudo apt-get purge ctorrent 
-			sudo apt-get purge ktorrent 
-			sudo apt-get purge rtorrent 
-			sudo apt-get purge deluge 
-			sudo apt-get purge transmission-gtk
-			sudo apt-get purge transmission-common 
-			sudo apt-get purge tixati 
-			sudo apt-get purge frostwise 
-			sudo apt-get purge vuze 
-			sudo apt-get purge irssi
-			sudo apt-get purge talk 
-			sudo apt-get purge telnet
+			sudo apt-get autoremove pure-ftpd --force-yes -y
+			sudo apt-get autoremove nmap --force-yes -y
+			sudo apt-get purge qbittorrent --force-yes -y
+			sudo apt-get purge utorrent --force-yes -y
+			sudo apt-get purge ctorrent --force-yes -y
+			sudo apt-get purge ktorrent --force-yes -y
+			sudo apt-get purge rtorrent --force-yes -y
+			sudo apt-get purge deluge --force-yes -y
+			sudo apt-get purge transmission-gtk --force-yes -y
+			sudo apt-get purge transmission-common --force-yes -y
+			sudo apt-get purge tixati --force-yes -y
+			sudo apt-get purge frostwise --force-yes -y
+			sudo apt-get purge vuze --force-yes -y
+			sudo apt-get purge irssi --force-yes -y
+			sudo apt-get purge talk --force-yes -y
+			sudo apt-get purge telnet --force-yes -y
+
 				#Remove pentesting
-			sudo apt-get purge wireshark 
-			sudo apt-get purge nmap 
-			sudo apt-get purge john 
-			sudo apt-get purge netcat 
-			sudo apt-get purge netcat-openbsd 
-			sudo apt-get purge netcat-traditional 
-			sudo apt-get purge netcat-ubuntu 
-			sudo apt-get purge netcat-minimal
+			sudo apt-get purge wireshark --force-yes -y
+			sudo apt-get purge nmap --force-yes -y
+			sudo apt-get purge john --force-yes -y
+			sudo apt-get purge netcat --force-yes -y
+			sudo apt-get purge netcat-openbsd --force-yes -y
+			sudo apt-get purge netcat-traditional --force-yes -y
+			sudo apt-get purge netcat-ubuntu --force-yes -y
+			sudo apt-get purge netcat-minimal--force-yes -y
+
 				#cleanup	 
 			sudo apt-get autoremove
 
-			echo "other software"
 			MainScreen
 			;;
 
@@ -481,9 +475,11 @@ function DisableRoot(){
 
 		"Y" | "Yes" | "yes" | "y" )
 		
+			sudo passwd -l root
+			
 			rootExitsts=$(grep PermitRootLogin /etc/ssh/sshd_config|wc -l)
 
-			if [ $rootExists -eq 0 ]; then
+			if [ $rootExists=0 ]; then
 				sudo bash -c 'echo "PermitRootLogin no" >> /etc/ssh/shd_config'
 			else
 				sudo perl -pi -e 's/.*PermitRootLogin*/PermitRootLogin no/g' /etc/ssh/sshd_config
