@@ -61,7 +61,6 @@ function MainScreen(){
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
-	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}//////////////////////////////1. User Management      ////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}//////////////////////////////2. Updates              ////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}//////////////////////////////3. Unauthorized Media   ////////////////////////${RED}*${NC}"
@@ -69,8 +68,9 @@ function MainScreen(){
 	echo -e "${RED}*${NC}//////////////////////////////5. Guest Removal        ////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}//////////////////////////////6. Disable Root         ////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}//////////////////////////////7. Open SSH             ////////////////////////${RED}*${NC}"
-	echo -e "${RED}*${NC}//////////////////////////////8. Firewall             ////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}//////////////////////////////8. Network Security     ////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}//////////////////////////////9. Password Policy      ////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}//////////////////////////////10. File Permissions    ////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}//////////////////////////////${RED}X. Exit Program${NC}         ////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -115,11 +115,15 @@ function MainScreen(){
 			;;
 
 		8 )
-			Firewall
+			NetWorkSecurity
 			;;
 
 		9 )
 			PasswordPolicy
+			;;
+		
+		10 )
+			FilePermissions
 			;;
 		[xX] )
 			AreYouSure
@@ -149,9 +153,9 @@ function UserManagement(){
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}/////////////////////////3. Change Admin Access      /////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
-	echo -e "${RED}*${NC}/////////////////////////4. ${RED}Main Screen${NC}              /////////////////////////*"
+	echo -e "${RED}*${NC}/////////////////////////4. Add Users                /////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
-	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}/////////////////////////5. ${RED}Main Screen${NC}              /////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -168,6 +172,10 @@ function UserManagement(){
 
 		1 )
 			echo "Delete Unauthorized Users"
+			for i in $(cat /etc/passwd | cut -d: -f 1,3,6 | grep -e "[5-9][0-9][0-9]" -e "[0-9][0-9][0-9][0-9]" | grep "/home" | cut -d: -f1) ; do
+				if [[ $( grep -ic -e $i $(pwd)/README ) -eq 0 ]]; then	
+					(deluser $i --remove-all-files >> RemovingUsers.txt 2>&1) &  #starts deleting in background
+				fi
 			MainScreen
 			;;
 
@@ -177,12 +185,54 @@ function UserManagement(){
 			;;
 
 		3 )
-			echo "Admin Access"
-
+			for i in $(cat /etc/passwd | cut -d: -f 1,3,6 | grep -e "[5-9][0-9][0-9]" -e "[0-9][0-9][0-9][0-9]" | grep "/home" | cut -d: -f1); do
+				#If the user is supposed to be a normal user but is in the sudo group, remove them from sudo
+				BadUser=0
+				if [[ $( grep -ic $i $(pwd)/users.txt ) -ne 0 ]]; then	
+					if [[ $( echo $( grep "sudo" /etc/group) | grep -ic $i ) -ne 0 ]]; then	
+						#if username is in sudo when shouldn’t
+						deluser $i sudo;
+						echo "removing $i from sudo" >> usersChanged.txt
+					fi
+			if [[ $( echo $( grep "adm" /etc/group) | grep -ic $i ) -ne 0 ]]; then	
+						#if username is in adm when shouldn’t
+						deluser $i adm;
+						echo "removing $i from adm" >> usersChanged.txt
+					fi
+				else
+					BadUser=$((BadUser+1));
+				fi
+				#If user is supposed to be an adm but isn’t, raise privilege.
+				if [[ $( grep -ic $i $(pwd)/admin.txt ) -ne 0 ]]; then	
+					if [[ $( echo $( grep "sudo" /etc/group) | grep -ic $i ) -eq 0 ]]; then	
+						#if username isn't in sudo when should
+						usermod -a -G "sudo" $i
+						echo "add $i to sudo"  >> usersChanged.txt
+					fi
+			if [[ $( echo $( grep "adm" /etc/group) | grep -ic $i ) -eq 0 ]]; then	
+						#if username isn't in adm when should
+						usermod -a -G "adm" $i
+						echo "add $i to adm"  >> usersChanged.txt
+					fi
+				else
+					BadUser=$((BadUser+1));
+				fi
+				if [[ $BadUser -eq 2 ]]; then
+					echo "WARNING: USER $i HAS AN ID THAT IS CONSISTENT WITH A NEWLY ADDED USER YET IS NOT MENTIONED IN EITHER THE admin.txt OR users.txt FILE. LOOK INTO THIS." >> usersChanged.txt
+				fi
+			done
 			MainScreen
 			;;
 
 		4 )
+			echo "" >> addusers.txt
+			for i in $(cat $(pwd)/addusers.txt); do
+				useradd $i;
+
+			MainScreen
+			;;
+
+		5 )
 			MainScreen
 			;;
 		* )
@@ -337,7 +387,7 @@ function UnauthorizedSoftware(){
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
-	echo -e "*////////////////////////////////////${GREEN}Yes${NC}/${RED}No${NC}////////////////////////////////////*"
+	echo -e "*////////////////////////////////////${GREEN}Yes${NC}/${RED}No${NC}////////////////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -408,7 +458,7 @@ function GuestRemoval(){
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
-	echo -e "${RED}*${NC}///////////////////////////////REMOVE THE GUEST///////////////////////////////*"
+	echo -e "${RED}*${NC}///////////////////////////////REMOVE THE GUEST///////////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -456,7 +506,7 @@ function DisableRoot(){
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
-	echo -e "${RED}*${NC}/////////////////////////////////Disable Root?////////////////////////////////*"
+	echo -e "${RED}*${NC}/////////////////////////////////Disable Root?////////////////////////////////${RED}*${NC}echo "
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -546,13 +596,63 @@ function OpenSSH(){
 
 }
 
-function Firewall(){
-	sudo ufw enable
-	sudo ufw deny 23
-    sudo ufw deny 2049
-    sudo ufw deny 515
-    sudo ufw deny 111
-	MainScreen
+function NetWorkSecurity(){
+		echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}////////////////////////Are You Sure You Want to Exit?////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}*////////////////////////////////////${RED}Yes${NC}/${GREEN}No${NC}////////////////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+
+	exitAns=" "
+
+	read exitAns
+
+	case $exitAns in
+
+		"Y" | "Yes" | "yes" | "y" )
+		sudo ufw enable
+		sudo ufw deny 23
+		sudo ufw deny 2049
+		sudo ufw deny 515
+		sudo ufw deny 111
+		
+		cp /etc/hosts hosts
+		echo 127.0.0.1	localhost > /etc/hosts
+		echo 127.0.1.1	ubuntu  >> /etc/hosts
+
+		echo ::1     ip6-localhost ip6-loopback >> /etc/hosts
+		echo fe00::0 ip6-localnet >> /etc/hosts
+		echo ff00::0 ip6-mcastprefix >> /etc/hosts
+		echo ff02::1 ip6-allnodes >> /etc/hosts
+		echo ff02::2 ip6-allrouters >> /etc/hosts
+		MainScreen
+			;;
+
+		* )
+			MainScreen
+			;;
+
+	esac
+
 }
 
 
@@ -672,6 +772,66 @@ function PasswordPolicy(){
 
 
 }
+
+
+function FilePermissions(){
+	function GuestRemoval(){
+
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}//////////////////////CHANGE POSSIBLY EXPLOITABLE FILES?//////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}////////////////////////////////////${GREEN}Yes${NC}/${RED}No${NC}////////////////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+
+	guestAns=" "
+
+	read guestAns
+
+	case $guestAns in
+
+		"Y" | "Yes" | "yes" | "y" )
+			
+			chown root:root /etc/securetty
+			chmod 0600 /etc/securetty
+			chmod 644 /etc/crontab
+			chmod 640 /etc/ftpusers
+			chmod 440 /etc/inetd.conf
+			chmod 440 /etc/xinetd.conf
+			chmod 400 /etc/inetd.d
+			chmod 644 /etc/hosts.allow
+			chmod 440 /etc/sudoers
+			chmod 640 /etc/shadow
+			chown root:root /etc/shadow
+			
+			MainScreen
+			;;
+
+		* )
+			MainScreen
+			;;
+
+	esac
+
+}
+
 
 function AreYouSure(){
 
