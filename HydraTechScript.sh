@@ -171,11 +171,9 @@ function UserManagement(){
 	case $userAns in
 
 		1 )
-			echo "Delete Unauthorized Users"
 			for i in $(cat /etc/passwd | cut -d: -f 1,3,6 | grep -e "[5-9][0-9][0-9]" -e "[0-9][0-9][0-9][0-9]" | grep "/home" | cut -d: -f1) ; do
 				if [[ $( grep -ic -e $i $(pwd)/Documents/Hyrda-Tech-Scriptin/users.txt ) -eq 0 ]]; then	
-					(deluser $i --remove-all-files >>T RemovingUsers.txt 2>&1) &  #starts deleting in background
-				fi
+					(deluser $i --remove-all-files >>T RemovingUsers.txt 2>&1)				fi
 			done
 			MainScreen
 			;;
@@ -189,7 +187,7 @@ function UserManagement(){
 			for i in $(cat /etc/passwd | cut -d: -f 1,3,6 | grep -e "[5-9][0-9][0-9]" -e "[0-9][0-9][0-9][0-9]" | grep "/home" | cut -d: -f1); do
 				#If the user is supposed to be a normal user but is in the sudo group, remove them from sudo
 				BadUser=0
-				if [[ $( grep -ic $i $(pwd)/users.txt ) -ne 0 ]]; then	
+				if [[ $( grep -ic $i $(pwd)/Documents/users.txt ) -ne 0 ]]; then	
 					if [[ $( echo $( grep "sudo" /etc/group) | grep -ic $i ) -ne 0 ]]; then	
 						#if username is in sudo when shouldn’t
 						deluser $i sudo;
@@ -204,7 +202,7 @@ function UserManagement(){
 					BadUser=$((BadUser+1));
 				fi
 				#If user is supposed to be an adm but isn’t, raise privilege.
-				if [[ $( grep -ic $i $(pwd)/admin.txt ) -ne 0 ]]; then	
+				if [[ $( grep -ic $i $(pwd)/Documents/admin.txt ) -ne 0 ]]; then	
 					if [[ $( echo $( grep "sudo" /etc/group) | grep -ic $i ) -eq 0 ]]; then	
 						#if username isn't in sudo when should
 						usermod -a -G "sudo" $i
@@ -227,7 +225,7 @@ function UserManagement(){
 
 		4 )
 			echo "" >> addusers.txt
-			for i in $(cat $(pwd)/addusers.txt); do
+			for i in $(cat $(pwd)/Documents/addusers.txt); do
 				useradd $i;
 			done
 			MainScreen
