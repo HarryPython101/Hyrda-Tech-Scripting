@@ -173,8 +173,8 @@ function UserManagement(){
 		1 )
 			echo "Delete Unauthorized Users"
 			for i in $(cat /etc/passwd | cut -d: -f 1,3,6 | grep -e "[5-9][0-9][0-9]" -e "[0-9][0-9][0-9][0-9]" | grep "/home" | cut -d: -f1) ; do
-				if [[ $( grep -ic -e $i $(pwd)/README ) -eq 0 ]]; then	
-					(deluser $i --remove-all-files >> RemovingUsers.txt 2>&1) &  #starts deleting in background
+				if [[ $( grep -ic -e $i $(pwd)/Documents/Hyrda-Tech-Scriptin/users.txt ) -eq 0 ]]; then	
+					(deluser $i --remove-all-files >>T RemovingUsers.txt 2>&1) &  #starts deleting in background
 				fi
 			done
 			MainScreen
@@ -288,10 +288,10 @@ function AutomaticUpdates(){
 			sudo perl -pi -e 's/"${distro_id}:"*/Ubuntu xenial-security/g' /etc/apt/apt.conf.d/50unattended-upgrades
 			
 			apt_config=/etc/apt/apt.conf.d/10periodic
-			echo "APT::Periodic::Update-Package-Lists \"1\";" > $apt_config
-			echo "APT::Periodic::Download-Upgradeable-Packages \"1\";" >> $apt_config
-			echo "APT::Periodic::AutocleanInterval \"7\";" >> $apt_config
-			echo "APT::Periodic::Unattended-Upgrade \"1\";" >> $apt_config
+			sudo bash -c 'echo "APT::Periodic::Update-Package-Lists \"1\";" > $apt_config'
+			sudo bash -c 'echo "APT::Periodic::Download-Upgradeable-Packages \"1\";" >> $apt_config'
+			sudo bash -c 'echo "APT::Periodic::AutocleanInterval \"7\";" >> $apt_config'
+			sudo bash -c 'echo "APT::Periodic::Unattended-Upgrade \"1\";" >> $apt_config'
 
 			sudo apt-get dist-upgrade
 
@@ -483,7 +483,7 @@ function GuestRemoval(){
 	case $guestAns in
 
 		"Y" | "Yes" | "yes" | "y" )
-			sudo echo "allow-guest=false" >> /etc/lightdm/lightdm.conf
+			sudo bash -c 'echo "allow-guest=false" >> /etc/lightdm/lightdm.conf'
 			MainScreen
 			;;
 
@@ -637,14 +637,14 @@ function NetWorkSecurity(){
 		sudo ufw deny 111
 		
 		cp /etc/hosts hosts
-		echo 127.0.0.1	localhost > /etc/hosts
-		echo 127.0.1.1	ubuntu  >> /etc/hosts
+		sudo bash -c 'echo 127.0.0.1	localhost > /etc/hosts'
+		sudo bash -c 'echo 127.0.1.1	ubuntu  >> /etc/hosts'
 
-		echo ::1     ip6-localhost ip6-loopback >> /etc/hosts
-		echo fe00::0 ip6-localnet >> /etc/hosts
-		echo ff00::0 ip6-mcastprefix >> /etc/hosts
-		echo ff02::1 ip6-allnodes >> /etc/hosts
-		echo ff02::2 ip6-allrouters >> /etc/hosts
+		sudo bash -c 'echo ::1     ip6-localhost ip6-loopback >> /etc/hosts'
+		sudo bash -c 'echo fe00::0 ip6-localnet >> /etc/hosts'
+		sudo bash -c 'echo ff00::0 ip6-mcastprefix >> /etc/hosts'
+		sudo bash -c 'echo ff02::1 ip6-allnodes >> /etc/hosts'
+		sudo bash -c 'echo ff02::2 ip6-allrouters >> /etc/hosts'
 		MainScreen
 			;;
 
