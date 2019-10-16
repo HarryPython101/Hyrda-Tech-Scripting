@@ -57,7 +57,7 @@ function HomeScreen(){
 
 function MainScreen(){
 	echo -e "${RED}********************************************************************************"
-	echo -e "********************************************************************************${NC}"	echo -e "${RED}*${NC}                                                                              *"
+	echo -e "********************************************************************************${NC}" "                                                                             *"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -176,6 +176,7 @@ function UserManagement(){
 				if [[ $( grep -ic -e $i $(pwd)/README ) -eq 0 ]]; then	
 					(deluser $i --remove-all-files >> RemovingUsers.txt 2>&1) &  #starts deleting in background
 				fi
+			done
 			MainScreen
 			;;
 
@@ -228,7 +229,7 @@ function UserManagement(){
 			echo "" >> addusers.txt
 			for i in $(cat $(pwd)/addusers.txt); do
 				useradd $i;
-
+			done
 			MainScreen
 			;;
 
@@ -531,7 +532,7 @@ function DisableRoot(){
 		
 			sudo passwd -l root
 			
-			rootExitsts=$(grep PermitRootLogin /etc/ssh/sshd_config|wc -l)
+			rootExists=$(grep PermitRootLogin /etc/ssh/sshd_config|wc -l)
 
 			if [ $rootExists=0 ]; then
 				sudo bash -c 'echo "PermitRootLogin no" >> /etc/ssh/shd_config'
@@ -607,13 +608,13 @@ function NetWorkSecurity(){
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
-	echo -e "${RED}*${NC}////////////////////////Are You Sure You Want to Exit?////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}///////////////////////////Enable Network Security?///////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
-	echo -e "${RED}*${NC}*////////////////////////////////////${RED}Yes${NC}/${GREEN}No${NC}////////////////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}*////////////////////////////////////${GREEN}Yes${NC}/${RED}No${NC}////////////////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -622,11 +623,11 @@ function NetWorkSecurity(){
 	echo -e "${RED}********************************************************************************"
 	echo -e "********************************************************************************${NC}"
 
-	exitAns=" "
+	networkAns=" "
 
-	read exitAns
+	read networkAns
 
-	case $exitAns in
+	case $networkAns in
 
 		"Y" | "Yes" | "yes" | "y" )
 		sudo ufw enable
@@ -775,7 +776,7 @@ function PasswordPolicy(){
 
 
 function FilePermissions(){
-	function GuestRemoval(){
+
 
 	echo -e "${RED}********************************************************************************"
 	echo -e "********************************************************************************${NC}"
@@ -801,11 +802,11 @@ function FilePermissions(){
 	echo -e "${RED}********************************************************************************"
 	echo -e "********************************************************************************${NC}"
 
-	guestAns=" "
+	exploitAns=" "
 
-	read guestAns
+	read exploitAns
 
-	case $guestAns in
+	case $exploitAns in
 
 		"Y" | "Yes" | "yes" | "y" )
 			
