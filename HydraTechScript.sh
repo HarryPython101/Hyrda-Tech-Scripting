@@ -274,7 +274,7 @@ function AutomaticUpdates(){
 
 		"Y" | "Yes" | "yes" | "y" )
 
-			sudo apt-get upgrade
+			sudo apt-get upgrade --force-ues -y
 			sudo apt-get install --only-upgrade bash --force-yes -y
 			sudo apt-get install -f --force-yes -y
 			sudo apt-get autoremove --force-yes -y
