@@ -151,9 +151,9 @@ function UserManagement(){
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}/////////////////////////${GREEN}2. Change Weak Passwords${NC}    /////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
-	echo -e "${RED}*${NC}/////////////////////////3. Change Admin Access      /////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}/////////////////////////${GREEN}3. Change Admin Access${NC}      /////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
-	echo -e "${RED}*${NC}/////////////////////////4. Add Users                /////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}/////////////////////////${GREEN}4. Add Users${NC}                /////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}/////////////////////////5. ${RED}Main Screen${NC}              /////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -271,11 +271,80 @@ function ChangePasswords(){
 }
 
 function ChangeAdmins(){
-	echo "ChangeAdmins"
+
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}////////////////////////Enter Username to Change Admin////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+
+chngAdm=" "
+
+read  chngAdm
+
+	##Removes user from the admin group
+	sudo deluser $chngAdm adm
+
+	##Removes from the sudo group
+	sudo deluser $chngAdm sudo
+
+	UserManagement
 }
 
 function AddUsers(){
-	echo "AddUsers"
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}//////////////////////////Enter Username to Add User//////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	
+	addUser=" "
+
+	read addUser
+
+	## Adds The User
+	sudo useradd $addUser
+
+	## Creates Home Directory for the User
+	sudo mkdir /home/$addUser
+
+	UserManagement
 }
 
 
