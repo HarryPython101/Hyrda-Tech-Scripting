@@ -752,6 +752,46 @@ function NetWorkSecurity(){
 		sudo bash -c 'echo ff00::0 ip6-mcastprefix >> /etc/hosts'
 		sudo bash -c 'echo ff02::1 ip6-allnodes >> /etc/hosts'
 		sudo bash -c 'echo ff02::2 ip6-allrouters >> /etc/hosts'
+		
+		sudo apt-get install clamav --force-yes -y
+		sudo freshclam
+		sudo clamscan -r /
+		sudo clamscan --remove -i
+		sudo clamscan ‘/home/
+		sudo clamscan --remove -i
+		sudo clamscan -r
+		sudo clamscan -r --move=/home/USER/VIRUS /home/USER
+		sudo clamscan -r --remove /home/USER
+		sudo apt-get install gdebi --force-yes -y
+		sudo wget https://bitbucket.org/dave_theunsub/clamtk/downloads/clamtk_5.20-1_all.deb
+		sudo gdebi clamtk_5.20-1_all.deb
+		sudo apt-get install gdebi --force-yes -y
+		sudo wget https://bitbucket.org/dave_theunsub/clamtk-gnome/downloads/clamtk-gnome_0.01-1_all.deb
+		sudo gdebi clamtk-gnome_0.01-1_all.deb
+		sudo apt-get install apparmor-utils --force-yes -y
+		sudo apparmor_status
+		sudo aa-enforce /etc/apparmor.d/usr.bin.firefox
+		sudo aa-enforce  /etc/apparmor.d/usr.bin.Firefox
+		sudo aa-enforce /etc/apparmor.d/usr.bin.window explorer
+		sudo echo "# Block SYN Attacks
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_max_syn_backlog = 2048
+net.ipv4.tcp_synack_retries = 2
+net.ipv4.tcp_syn_retries = 5">>/etc/svsctl.com
+		sudo echo "#Turn on Source Address Verification in all interface to
+# prevent some spoofing attacks
+net.ipv4.conf.default.rp_filter=1
+net.ipv4.conf.all.rp_filter=1">>/etc/sysctl.conf
+		sudo echo "# The “order” line is only used by old versions of the C library.
+order hosts ,bind
+multi on
+order blind ,host
+nospoof on">>/etc/host.conf
+		sudo apt install ecryptfs-utils --force-yes -y
+		sudo ecryptfs-setup-swap
+		sudo apt‐get install auditd --force-yes -y
+		auditctl –e 1
+
 		MainScreen
 			;;
 
