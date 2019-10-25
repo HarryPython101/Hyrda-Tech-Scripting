@@ -530,6 +530,7 @@ function UnauthorizedSoftware(){
 			sudo apt-get purge irssi --force-yes -y
 			sudo apt-get purge talk --force-yes -y
 			sudo apt-get purge telnet --force-yes -y
+			sudo apt-get purge ftp --force-yes -y
 
 				#Remove pentesting
 			sudo apt-get purge wireshark --force-yes -y
@@ -753,6 +754,8 @@ function NetWorkSecurity(){
 		sudo bash -c 'echo ff02::1 ip6-allnodes >> /etc/hosts'
 		sudo bash -c 'echo ff02::2 ip6-allrouters >> /etc/hosts'
 		
+		echo "net.ipv6.conf.all.disable_ipv6 = 1" | sudo tee -a /etc/sysctl.conf
+
 		sudo apt-get install clamav --force-yes -y
 		sudo freshclam
 		sudo clamscan -r /
@@ -791,6 +794,9 @@ nospoof on">>/etc/host.conf
 		sudo ecryptfs-setup-swap
 		sudo apt‐get install auditd --force-yes -y
 		auditctl –e 1
+		sudo apt-get install tiger --force-yes -yes
+		sudo tiger
+
 
 		MainScreen
 			;;
