@@ -1056,17 +1056,11 @@ function SystemSecurity(){
 			sudo apt-get install tiger --force-yes -yes
 			sudo tiger
 
-			sudo nano /etc/pam.d/cron
 	  			echo "--------------cron.* Directories------------------">>~/cron.txt
 			sudo tree -a -h -A /etc/cron.hourly>>~/cron.txt
 			sudo tree -a -h -A /etc/cron.daily>>~/cron.txt
 			sudo tree -a -h -A /etc/cron.weekly>>~/cron.txt
 			sudo tree -a -h -A /etc/cron.monthly>>~/cron.txt
-			sudo nano /etc/anacrontab
-			sudo nano /etc/crontab
-			sudo nano /etc/hosts.allow
-			sudo nano /etc/hosts.deny
-
 				#Startup
 				echo "-------------STARTUP-----------">>~/cron.txt
 			sudo tree -a -h -A /var/spool>>~/cron.txt
