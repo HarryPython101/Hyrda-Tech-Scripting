@@ -5,6 +5,7 @@ RED='\033[0;031m'
 GREEN='\033[0;032m'
 NC='\033[0m'
 
+
 function HomeScreen(){
 
 	cd ~
@@ -71,8 +72,8 @@ function MainScreen(){
 	echo -e "${RED}*${NC}//////////////////////////////${GREEN}8. Network Security${NC}     ////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}//////////////////////////////${GREEN}9. Password Policy${NC}      ////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}//////////////////////////////${GREEN}10. File Permissions${NC}    ////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}//////////////////////////////${GREEN}11. System Security${NC}      ////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}//////////////////////////////${RED}X. Exit Program${NC}         ////////////////////////${RED}*${NC}"
-	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -125,6 +126,9 @@ function MainScreen(){
 		10 )
 			FilePermissions
 			;;
+		11)
+			SystemSecurity
+			;;	
 		[xX] )
 			AreYouSure
 			;;
@@ -151,7 +155,7 @@ function UserManagement(){
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}/////////////////////////${GREEN}2. Change Weak Passwords${NC}    /////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
-	echo -e "${RED}*${NC}/////////////////////////${GREEN}3. Change Admin Access ${NC}     /////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}/////////////////////////${GREEN}3. Change Admin Access${NC}      /////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}/////////////////////////${GREEN}4. Add Users${NC}                /////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -171,63 +175,22 @@ function UserManagement(){
 	case $userAns in
 
 		1 )
-			for i in $(cat /etc/passwd | cut -d: -f 1,3,6 | grep -e "[5-9][0-9][0-9]" -e "[0-9][0-9][0-9][0-9]" | grep "/home" | cut -d: -f1) ; do
-				if [[ $( grep -ic -e $i $(pwd)/Documents/Hyrda-Tech-Scriptin/users.txt ) -eq 0 ]]; then	
-					(deluser $i --remove-all-files >>T RemovingUsers.txt 2>&1)				fi
-			done
+			UnauthorizedUsers
 			MainScreen
 			;;
 
 		2 )
-			echo "Change Passwords"
+			ChangePasswords
 			MainScreen
 			;;
 
 		3 )
-			for i in $(cat /etc/passwd | cut -d: -f 1,3,6 | grep -e "[5-9][0-9][0-9]" -e "[0-9][0-9][0-9][0-9]" | grep "/home" | cut -d: -f1); do
-				#If the user is supposed to be a normal user but is in the sudo group, remove them from sudo
-				BadUser=0
-				if [[ $( grep -ic $i $(pwd)/Documents/users.txt ) -ne 0 ]]; then	
-					if [[ $( echo $( grep "sudo" /etc/group) | grep -ic $i ) -ne 0 ]]; then	
-						#if username is in sudo when shouldn’t
-						deluser $i sudo;
-						echo "removing $i from sudo" >> usersChanged.txt
-					fi
-			if [[ $( echo $( grep "adm" /etc/group) | grep -ic $i ) -ne 0 ]]; then	
-						#if username is in adm when shouldn’t
-						deluser $i adm;
-						echo "removing $i from adm" >> usersChanged.txt
-					fi
-				else
-					BadUser=$((BadUser+1));
-				fi
-				#If user is supposed to be an adm but isn’t, raise privilege.
-				if [[ $( grep -ic $i $(pwd)/Documents/admin.txt ) -ne 0 ]]; then	
-					if [[ $( echo $( grep "sudo" /etc/group) | grep -ic $i ) -eq 0 ]]; then	
-						#if username isn't in sudo when should
-						usermod -a -G "sudo" $i
-						echo "add $i to sudo"  >> usersChanged.txt
-					fi
-			if [[ $( echo $( grep "adm" /etc/group) | grep -ic $i ) -eq 0 ]]; then	
-						#if username isn't in adm when should
-						usermod -a -G "adm" $i
-						echo "add $i to adm"  >> usersChanged.txt
-					fi
-				else
-					BadUser=$((BadUser+1));
-				fi
-				if [[ $BadUser -eq 2 ]]; then
-					echo "WARNING: USER $i HAS AN ID THAT IS CONSISTENT WITH A NEWLY ADDED USER YET IS NOT MENTIONED IN EITHER THE admin.txt OR users.txt FILE. LOOK INTO THIS." >> usersChanged.txt
-				fi
-			done
+			ChangeAdmins
 			MainScreen
 			;;
 
 		4 )
-			echo "" >> addusers.txt
-			for i in $(cat $(pwd)/Documents/addusers.txt); do
-				useradd $i;
-			done
+			AddUsers
 			MainScreen
 			;;
 
@@ -240,6 +203,156 @@ function UserManagement(){
 	esac
 
 }
+
+function UnauthorizedUsers(){
+
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}///////////////////////Enter Name Of User To Be Deleted///////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	
+	userDel=" "
+
+	read userDel
+
+	sudo userdel -r $userDel
+
+	UserManagement
+
+}
+
+function ChangePasswords(){
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}///////////////////////Enter Username to Change Password///////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	
+	chngPass=" "
+
+	read chngPass
+	
+	sed -i s/NOPASSWD:// /etc/sudoers
+
+	echo "CyberP@tr1ot" | sudo passwd $chngPass
+
+	UserManagement
+}
+
+function ChangeAdmins(){
+
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}////////////////////////Enter Username to Change Admin////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+
+chngAdm=" "
+
+read  chngAdm
+
+	##Removes user from the admin group
+	sudo deluser $chngAdm adm
+
+	##Removes from the sudo group
+	sudo deluser $chngAdm sudo
+
+	UserManagement
+}
+
+function AddUsers(){
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}//////////////////////////Enter Username to Add User//////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	
+	addUser=" "
+
+	read addUser
+
+	## Adds The User
+	sudo useradd $addUser
+
+	## Creates Home Directory for the User
+	sudo mkdir /home/$addUser
+
+	UserManagement
+}
+
 
 function AutomaticUpdates(){
 	echo -e "${RED}********************************************************************************"
@@ -274,27 +387,33 @@ function AutomaticUpdates(){
 
 		"Y" | "Yes" | "yes" | "y" )
 
-			sudo apt-get upgrade --force-ues -y
+			sudo apt-get update --force-yes -y
+			sudo apt-get upgrade --force-yes -y
 			sudo apt-get install --only-upgrade bash --force-yes -y
 			sudo apt-get install -f --force-yes -y
-			sudo apt-get autoremove --force-yes -y
-			sudo apt-get autoclean --force-yes -y
-			sudo apt-get check
+
 			
 			sudo apt-get install perl --force-yes -y
 
-			sudo perl -pi -e 's/"${distro_id}:"*/Ubuntu xenial-security/g' /etc/apt/apt.conf.d/50unattended-upgrades
-			
+			chmod 777 /etc/apt/apt.conf.d/10periodic
+			cp /etc/apt/apt.conf.d/10periodic ~/Desktop/backups/
+			echo -e "APT::Periodic::Update-Package-Lists \"1\";\nAPT::Periodic::Download-Upgradeable-Packages \"1\";\nAPT::Periodic::AutocleanInterval \"1\";\nAPT::Periodic::Unattended-Upgrade \"1\";" > /etc/apt/apt.conf.d/10periodic
 			apt_config=/etc/apt/apt.conf.d/10periodic
 			sudo bash -c 'echo "APT::Periodic::Update-Package-Lists \"1\";" > $apt_config'
 			sudo bash -c 'echo "APT::Periodic::Download-Upgradeable-Packages \"1\";" >> $apt_config'
 			sudo bash -c 'echo "APT::Periodic::AutocleanInterval \"7\";" >> $apt_config'
 			sudo bash -c 'echo "APT::Periodic::Unattended-Upgrade \"1\";" >> $apt_config'
-
+			chmod 644 /etc/apt/apt.conf.d/10periodic
+			
 			sudo apt-get dist-upgrade
-
 			sudo apt-get install unattended-upgrades --force-yes -y	
+			apt-get update -qq
+			apt-get upgrade -qq
+			apt-get dist-upgrade -qq
 
+			sudo apt-get autoremove --force-yes -y
+			sudo apt-get autoclean --force-yes -y
+			sudo apt-get check
 			MainScreen
 			;;
 
@@ -344,20 +463,21 @@ function MediaRemoval(){
 	case $fileAns in
 
 		"Y" | "Yes" | "yes" | "y" )
-			find / -name '*.mp3' -type f -delete
-    		find / -name '*.mov' -type f -delete
- 			find / -name '*.mp4' -type f -delete
-    		find / -name '*.avi' -type f -delete
-    		find / -name '*.mpg' -type f -delete
-    		find / -name '*.mpeg' -type f -delete
-			find / -name '*.flac' -type f -delete
-			find / -name '*.m4a' -type f -delete
-    		find / -name '*.flv' -type f -delete
-    		find / -name '*.ogg' -type f -delete
-			find /home -name '*.gif' -type f -delete
-			find /home -name '*.png' -type f -delete
-    		find /home -name '*.jpg' -type f -delete
-    		find /home -name '*.jpeg' -type f -delete
+			sudo find / -name '*.mp3' -type f -delete
+    		sudo find / -name '*.mov' -type f -delete
+    		sudo find / -name '*.mov' -type f -delete
+ 			sudo find / -name '*.mp4' -type f -delete
+    		sudo find / -name '*.avi' -type f -delete
+    		sudo find / -name '*.mpg' -type f -delete
+    		sudo find / -name '*.mpeg' -type f -delete
+			sudo find / -name '*.flac' -type f -delete
+			sudo find / -name '*.m4a' -type f -delete
+    		sudo find / -name '*.flv' -type f -delete
+    		sudo find / -name '*.ogg' -type f -delete
+			sudo find /home -name '*.gif' -type f -delete
+			sudo find /home -name '*.png' -type f -delete
+    		sudo find /home -name '*.jpg' -type f -delete
+    		sudo find /home -name '*.jpeg' -type f -delete
 			
 			echo "Removed the media"
 
@@ -423,6 +543,7 @@ function UnauthorizedSoftware(){
 			sudo apt-get purge irssi --force-yes -y
 			sudo apt-get purge talk --force-yes -y
 			sudo apt-get purge telnet --force-yes -y
+			sudo apt-get purge ftp --force-yes -y
 
 				#Remove pentesting
 			sudo apt-get purge wireshark --force-yes -y
@@ -519,6 +640,8 @@ function DisableRoot(){
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}********************************************************************************"
 	echo -e "********************************************************************************${NC}"
+
+	sudo apt-get install perl --force-yes -y
 
 	rootAns=" "
 
@@ -628,61 +751,40 @@ function NetWorkSecurity(){
 	case $networkAns in
 
 		"Y" | "Yes" | "yes" | "y" )
-		sudo ufw enable
-		sudo ufw deny 23
-		sudo ufw deny 2049
-		sudo ufw deny 515
-		sudo ufw deny 111
-		
-		cp /etc/hosts hosts
-		sudo bash -c 'echo 127.0.0.1	localhost > /etc/hosts'
-		sudo bash -c 'echo 127.0.1.1	ubuntu  >> /etc/hosts'
+			sudo ufw enable
+			sudo ufw deny 23
+			sudo ufw deny 2049
+			sudo ufw deny 515
+			sudo ufw deny 111
+			
+			cp /etc/hosts hosts
+			sudo bash -c 'echo 127.0.0.1	localhost > /etc/hosts'
+			sudo bash -c 'echo 127.0.1.1	ubuntu  >> /etc/hosts'
 
-		sudo bash -c 'echo ::1     ip6-localhost ip6-loopback >> /etc/hosts'
-		sudo bash -c 'echo fe00::0 ip6-localnet >> /etc/hosts'
-		sudo bash -c 'echo ff00::0 ip6-mcastprefix >> /etc/hosts'
-		sudo bash -c 'echo ff02::1 ip6-allnodes >> /etc/hosts'
-		sudo bash -c 'echo ff02::2 ip6-allrouters >> /etc/hosts'
-		
-		sudo apt-get install clamav --force-yes -y
-		sudo freshclam
-		sudo clamscan -r /
-		sudo clamscan --remove -i
-		sudo clamscan ‘/home/
-		sudo clamscan --remove -i
-		sudo clamscan -r
-		sudo clamscan -r --move=/home/USER/VIRUS /home/USER
-		sudo clamscan -r --remove /home/USER
-		sudo apt-get install gdebi --force-yes -y
-		sudo wget https://bitbucket.org/dave_theunsub/clamtk/downloads/clamtk_5.20-1_all.deb
-		sudo gdebi clamtk_5.20-1_all.deb
-		sudo apt-get install gdebi --force-yes -y
-		sudo wget https://bitbucket.org/dave_theunsub/clamtk-gnome/downloads/clamtk-gnome_0.01-1_all.deb
-		sudo gdebi clamtk-gnome_0.01-1_all.deb
-		sudo apt-get install apparmor-utils --force-yes -y
-		sudo apparmor_status
-		sudo aa-enforce /etc/apparmor.d/usr.bin.firefox
-		sudo aa-enforce  /etc/apparmor.d/usr.bin.Firefox
-		sudo aa-enforce /etc/apparmor.d/usr.bin.window explorer
-		sudo echo "# Block SYN Attacks
-net.ipv4.tcp_syncookies = 1
-net.ipv4.tcp_max_syn_backlog = 2048
-net.ipv4.tcp_synack_retries = 2
-net.ipv4.tcp_syn_retries = 5">>/etc/svsctl.com
-		sudo echo "#Turn on Source Address Verification in all interface to
-# prevent some spoofing attacks
-net.ipv4.conf.default.rp_filter=1
-net.ipv4.conf.all.rp_filter=1">>/etc/sysctl.conf
-		sudo echo "# The “order” line is only used by old versions of the C library.
-order hosts ,bind
-multi on
-order blind ,host
-nospoof on">>/etc/host.conf
-		sudo apt install ecryptfs-utils --force-yes -y
-		sudo ecryptfs-setup-swap
-		sudo apt‐get install auditd --force-yes -y
-		auditctl –e 1
-		
+			sudo bash -c 'echo ::1     ip6-localhost ip6-loopback >> /etc/hosts'
+			sudo bash -c 'echo fe00::0 ip6-localnet >> /etc/hosts'
+			sudo bash -c 'echo ff00::0 ip6-mcastprefix >> /etc/hosts'
+			sudo bash -c 'echo ff02::1 ip6-allnodes >> /etc/hosts'
+			sudo bash -c 'echo ff02::2 ip6-allrouters >> /etc/hosts'
+			
+			echo "net.ipv6.conf.all.disable_ipv6 = 1" | sudo tee -a /etc/sysctl.conf
+
+
+			sudo echo "# Block SYN Attacks
+	net.ipv4.tcp_syncookies = 1
+	net.ipv4.tcp_max_syn_backlog = 2048
+	net.ipv4.tcp_synack_retries = 2
+	net.ipv4.tcp_syn_retries = 5">>/etc/svsctl.com
+			sudo echo "#Turn on Source Address Verification in all interface to
+	# prevent some spoofing attacks
+	net.ipv4.conf.default.rp_filter=1
+	net.ipv4.conf.all.rp_filter=1">>/etc/sysctl.conf
+			sudo echo "# The “order” line is only used by old versions of the C library.
+	order hosts ,bind
+	multi on
+	order blind ,host
+	nospoof on">>/etc/host.conf
+
 
 		MainScreen
 			;;
@@ -872,6 +974,150 @@ function FilePermissions(){
 
 }
 
+function SystemSecurity(){
+		echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}///////////////////////////Enable System Security?////////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}*////////////////////////////////////${GREEN}Yes${NC}/${RED}No${NC}////////////////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+
+	systemAns=" "
+
+	read systemAns
+
+	case $systemAns in
+
+		"Y" | "Yes" | "yes" | "y" )
+			# Protect against rubber ducky attacks
+			sudo bash -c 'echo "blacklist usbhid" > /etc/modprobe.d/usbhid.conf'
+			sudo update-initramfs -u -k $(uname -r)
+			update-initramfs: Generating /boot/initrd.img-4.15.0-23-generic
+
+			sudo unalias -a
+			sudo alias egrep='egrep --color=auto'
+			sudo alias fgrep='fgrep --color=auto'
+			sudo alias grep='grep --color=auto'
+			sudo alias l='ls -CF'
+			sudo alias la='ls -A'
+			sudo alias ll='ls -alF'
+			sudo alias ls='ls --color=auto'
+			sudo alias cls='clear'
+			sudo alias dir='ls'
+			sudo alias type='cat'
+			sudo alias apt-get='apt-get'
+
+			apt-get upgrade openssl libssl-dev
+			apt-cache policy openssl libssl-dev
+			sudo apt-get install clamav --force-yes -y
+			sudo freshclam >> clam.txt
+			sudo clamscan -r / >> clam.txt
+			sudo clamscan --remove -i >> clam.txt
+			sudo clamscan ‘/home/ >> clam.txt
+			sudo clamscan --remove -i >> clam.txt
+			sudo clamscan -r >> clam.txt
+			sudo clamscan -r --move=/home/USER/VIRUS /home/USER >> clam.txt
+			sudo clamscan -r --remove /home/USER >> clam.txt
+			
+			sudo apt-get install gdebi --force-yes -y
+			sudo wget https://bitbucket.org/dave_theunsub/clamtk/downloads/clamtk_5.20-1_all.deb
+			sudo gdebi clamtk_5.20-1_all.deb
+			sudo apt-get install gdebi --force-yes -y
+			sudo wget https://bitbucket.org/dave_theunsub/clamtk-gnome/downloads/clamtk-gnome_0.01-1_all.deb
+			sudo gdebi clamtk-gnome_0.01-1_all.deb
+			
+			sudo apt-get install chkrootkit 
+			sudo chkrootkit >> rootscan.txt
+
+			sudo apt-get install apparmor-utils --force-yes -y
+			sudo apparmor_status
+			sudo aa-enforce /etc/apparmor.d/usr.bin.firefox
+			sudo aa-enforce  /etc/apparmor.d/usr.bin.Firefox
+			sudo aa-enforce /etc/apparmor.d/usr.bin.window explorer
+			
+			sudo apt install ecryptfs-utils --force-yes -y
+			sudo ecryptfs-setup-swap
+			
+			sudo apt‐get install auditd --force-yes -y
+			auditctl –e 1
+			
+			sudo apt-get install tiger --force-yes -yes
+			sudo tiger
+
+	  			echo "--------------cron.* Directories------------------">>~/cron.txt
+			sudo tree -a -h -A /etc/cron.hourly>>~/cron.txt
+			sudo tree -a -h -A /etc/cron.daily>>~/cron.txt
+			sudo tree -a -h -A /etc/cron.weekly>>~/cron.txt
+			sudo tree -a -h -A /etc/cron.monthly>>~/cron.txt
+				#Startup
+				echo "-------------STARTUP-----------">>~/cron.txt
+			sudo tree -a -h -A /var/spool>>~/cron.txt
+			sudo tree -a -h -A /var/spool/cron >>~/cron.txt
+			sudo tree -a -h -A /etc/init>>~/cron.txt
+
+			crontab -r
+			cd /etc/
+			/bin/rm -f cron.deny at.deny
+			echo root >cron.allow
+			echo root >at.allow
+			/bin/chown root:root cron.allow at.allow
+			/bin/chmod 400 cron.allow at.allow
+			cd ..
+
+			echo "#deb cdrom:[Ubuntu 12.04.1 LTS _Precise Pangolin_ - Release i386 (20120817.3)]/ precise main restricted
+    deb http://us.archive.ubuntu.com/ubuntu/ precise main restricted
+    deb-src http://us.archive.ubuntu.com/ubuntu/ precise main restricted
+    deb http://us.archive.ubuntu.com/ubuntu/ precise-updates main restricted
+    deb-src http://us.archive.ubuntu.com/ubuntu/ precise-updates main restricted
+    deb http://us.archive.ubuntu.com/ubuntu/ precise universe
+    deb-src http://us.archive.ubuntu.com/ubuntu/ precise universe
+    deb http://us.archive.ubuntu.com/ubuntu/ precise-updates universe
+    deb-src http://us.archive.ubuntu.com/ubuntu/ precise-updates universe
+    deb http://us.archive.ubuntu.com/ubuntu/ precise multiverse
+    deb-src http://us.archive.ubuntu.com/ubuntu/ precise multiverse
+    deb http://us.archive.ubuntu.com/ubuntu/ precise-updates multiverse
+    deb-src http://us.archive.ubuntu.com/ubuntu/ precise-updates multiverse
+    deb http://us.archive.ubuntu.com/ubuntu/ precise-backports main restricted universe multiverse
+    deb-src http://us.archive.ubuntu.com/ubuntu/ precise-backports main restricted universe multiverse
+    deb http://security.ubuntu.com/ubuntu precise-security main restricted
+    deb-src http://security.ubuntu.com/ubuntu precise-security main restricted
+    deb http://security.ubuntu.com/ubuntu precise-security universe
+    deb-src http://security.ubuntu.com/ubuntu precise-security universe
+    deb http://security.ubuntu.com/ubuntu precise-security multiverse
+    deb-src http://security.ubuntu.com/ubuntu precise-security multiverse
+    # deb http://archive.canonical.com/ubuntu precise partner
+    # deb-src http://archive.canonical.com/ubuntu precise partner
+    deb http://extras.ubuntu.com/ubuntu precise main
+    deb-src http://extras.ubuntu.com/ubuntu precise main" > /etc/apt/sources.list
+
+			MainScreen
+			;;
+
+		* )
+			MainScreen
+			;;
+
+	esac
+
+}
 
 function AreYouSure(){
 
