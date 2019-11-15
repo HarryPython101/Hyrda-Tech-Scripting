@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 #Hyrda Tech Scripting
 
 #This script has been created by Eric Mayo exclusively for the use of the Gull Lake High School Cyberpatriot team HydraTech .
@@ -9,18 +8,15 @@
 #your own, that is perfectly acceptable. However I would request that you at least make an effort to understand what they commands
 #do and why they are there before using them.
 
-
 BLUE='\033[0;34m'
 RED='\033[0;031m'
 GREEN='\033[0;032m'
 NC='\033[0m'
 
-
 function HomeScreen(){
 
 	cd ~
 	sudo unalias -a
-
 	
 	# user display
 	echo -e "${RED}********************************************************************************"
@@ -67,6 +63,7 @@ function HomeScreen(){
 }
 
 function MainScreen(){
+
 	echo -e "${RED}********************************************************************************"
 	echo -e "********************************************************************************${NC}"                                                                             
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -82,7 +79,7 @@ function MainScreen(){
 	echo -e "${RED}*${NC}//////////////////////////////${GREEN}8. Network Security${NC}     ////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}//////////////////////////////${GREEN}9. Password Policy${NC}      ////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}//////////////////////////////${GREEN}10. File Permissions${NC}    ////////////////////////${RED}*${NC}"
-	echo -e "${RED}*${NC}//////////////////////////////${GREEN}11. System Security${NC}      ////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}//////////////////////////////${GREEN}11. System Security${NC}     ////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}//////////////////////////////${RED}X. Exit Program${NC}         ////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -154,9 +151,9 @@ function MainScreen(){
 #read list of authorized users
 #delete all users not on it. and change administrator positions
 function UserManagement(){
+
 	echo -e "${RED}********************************************************************************"
 	echo -e "********************************************************************************${NC}"
-	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -169,7 +166,9 @@ function UserManagement(){
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}/////////////////////////${GREEN}4. Add Users${NC}                /////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
-	echo -e "${RED}*${NC}/////////////////////////5. ${RED}Main Screen${NC}              /////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}/////////////////////////${GREEN}5. Check For Passwords${NC}      /////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}/////////////////////////6. ${RED}Main Screen${NC}              /////////////////////////${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -186,25 +185,29 @@ function UserManagement(){
 
 		1 )
 			UnauthorizedUsers
-			MainScreen
+			
 			;;
 
 		2 )
 			ChangePasswords
-			MainScreen
+			
 			;;
 
 		3 )
 			ChangeAdmins
-			MainScreen
+			
 			;;
 
 		4 )
 			AddUsers
-			MainScreen
+			
 			;;
 
-		5 )
+		5)
+			CheckPasswords
+			;;
+
+		6 )
 			MainScreen
 			;;
 		* )
@@ -251,6 +254,7 @@ function UnauthorizedUsers(){
 }
 
 function ChangePasswords(){
+
 	echo -e "${RED}********************************************************************************"
 	echo -e "********************************************************************************${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -326,6 +330,7 @@ read  chngAdm
 }
 
 function AddUsers(){
+
 	echo -e "${RED}********************************************************************************"
 	echo -e "********************************************************************************${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -363,8 +368,53 @@ function AddUsers(){
 	UserManagement
 }
 
+function CheckPasswords(){
+
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}///////////////////////Check For Passwordless accounts?///////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+echo -e "${RED}*${NC}////////////////////////////////////${GREEN}Yes${NC}/${RED}No${NC}////////////////////////////////////${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
+	echo -e "${RED}********************************************************************************"
+	echo -e "********************************************************************************${NC}"
+	
+	checkPass=" "
+
+	read checkPass
+	
+	case $checkPass in
+		"Y" | "Yes" | "yes" | "y" )
+			awk -F: '(2 == "") {print}' /etc/shadow
+			;;
+		"N" | "No" | "no" | "n" )
+			UserManagement
+			;;
+		*)
+			CheckPasswords
+			;;
+	esac
+}
+
 
 function AutomaticUpdates(){
+
 	echo -e "${RED}********************************************************************************"
 	echo -e "********************************************************************************${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -406,7 +456,6 @@ function AutomaticUpdates(){
 			sudo apt-get install perl --force-yes -y
 
 			chmod 777 /etc/apt/apt.conf.d/10periodic
-			cp /etc/apt/apt.conf.d/10periodic ~/Desktop/backups/
 			echo -e "APT::Periodic::Update-Package-Lists \"1\";\nAPT::Periodic::Download-Upgradeable-Packages \"1\";\nAPT::Periodic::AutocleanInterval \"1\";\nAPT::Periodic::Unattended-Upgrade \"1\";" > /etc/apt/apt.conf.d/10periodic
 			apt_config=/etc/apt/apt.conf.d/10periodic
 			sudo bash -c 'echo "APT::Periodic::Update-Package-Lists \"1\";" > $apt_config'
@@ -442,6 +491,7 @@ function AutomaticUpdates(){
 }
 
 function MediaRemoval(){
+
 	echo -e "${RED}********************************************************************************"
 	echo -e "********************************************************************************${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -475,7 +525,6 @@ function MediaRemoval(){
 		"Y" | "Yes" | "yes" | "y" )
 			sudo find / -name '*.mp3' -type f -delete
     		sudo find / -name '*.mov' -type f -delete
-    		sudo find / -name '*.mov' -type f -delete
  			sudo find / -name '*.mp4' -type f -delete
     		sudo find / -name '*.avi' -type f -delete
     		sudo find / -name '*.mpg' -type f -delete
@@ -503,6 +552,7 @@ function MediaRemoval(){
 }
 
 function UnauthorizedSoftware(){
+
 	echo -e "${RED}********************************************************************************"
 	echo -e "********************************************************************************${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -729,6 +779,7 @@ function OpenSSH(){
 }
 
 function NetWorkSecurity(){
+
 		echo -e "${RED}********************************************************************************"
 	echo -e "********************************************************************************${NC}"
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
@@ -779,7 +830,6 @@ function NetWorkSecurity(){
 			
 			echo "net.ipv6.conf.all.disable_ipv6 = 1" | sudo tee -a /etc/sysctl.conf
 
-
 			sudo echo "# Block SYN Attacks
 	net.ipv4.tcp_syncookies = 1
 	net.ipv4.tcp_max_syn_backlog = 2048
@@ -795,7 +845,6 @@ function NetWorkSecurity(){
 	order blind ,host
 	nospoof on">>/etc/host.conf
 
-
 		MainScreen
 			;;
 
@@ -806,7 +855,6 @@ function NetWorkSecurity(){
 	esac
 
 }
-
 
 function PasswordPolicy(){
 
@@ -834,7 +882,6 @@ function PasswordPolicy(){
 	echo -e "${RED}*${NC}                                                                              ${RED}*${NC}"
 	echo -e "${RED}********************************************************************************"
 	echo -e "********************************************************************************${NC}"
-
 
 	passAns=" "
 
@@ -919,15 +966,9 @@ function PasswordPolicy(){
 				;;
 
 		esac
-
-
-
-
 }
 
-
 function FilePermissions(){
-
 
 	echo -e "${RED}********************************************************************************"
 	echo -e "********************************************************************************${NC}"
@@ -961,17 +1002,38 @@ function FilePermissions(){
 
 		"Y" | "Yes" | "yes" | "y" )
 			
-			chown root:root /etc/securetty
-			chmod 0600 /etc/securetty
-			chmod 644 /etc/crontab
-			chmod 640 /etc/ftpusers
-			chmod 440 /etc/inetd.conf
-			chmod 440 /etc/xinetd.conf
-			chmod 400 /etc/inetd.d
-			chmod 644 /etc/hosts.allow
-			chmod 440 /etc/sudoers
-			chmod 640 /etc/shadow
-			chown root:root /etc/shadow
+			sudo chown root:root /etc/securetty
+			sudo chmod 0600 /etc/securetty
+			sudo chmod 644 /etc/crontab
+			sudo chmod 640 /etc/ftpusers
+			sudo chmod 440 /etc/inetd.conf
+			sudo chmod 440 /etc/xinetd.conf
+			sudo chmod 400 /etc/inetd.d
+			sudo chmod 644 /etc/hosts.allow
+			sudo chmod 440 /etc/sudoers
+			sudo chmod 640 /etc/shadow
+			sudo chown root:root /etc/shadow
+			sudo chown root:root /etc/anacrontab
+			sudo chmod og-rwx /etc/anacrontab
+			sudo chown root:root /etc/crontab
+			sudo chmod og-rwx /etc/crontab
+			sudo chown root:root /etc/cron.hourly
+			sudo chmod og-rwx /etc/cron.hourly
+			sudo chown root:root /etc/cron.daily
+			sudo chmod og-rwx /etc/cron.daily
+			sudo chown root:root /etc/cron.weekly
+			sudo chmod og-rwx /etc/cron.weekly
+			sudo chown root:root /etc/cron.monthly
+			sudo chmod og-rwx /etc/cron.monthly
+			sudo chown root:root /etc/cron.d
+			sudo chmod og-rwx /etc/cron.d
+			sudo chmod 644 /etc/group
+			sudo chown root:root /etc/group
+			sudo chmod 600 /etc/shadow
+			sudo chown root:root /etc/shadow
+			sudo chmod 600 /etc/gshadow
+			sudo chown root:root /etc/gshadow
+
 			
 			MainScreen
 			;;
@@ -1018,9 +1080,21 @@ function SystemSecurity(){
 
 		"Y" | "Yes" | "yes" | "y" )
 			# Protect against rubber ducky attacks
-			sudo bash -c 'echo "blacklist usbhid" > /etc/modprobe.d/usbhid.conf'
+			sudo bash -c 'echo "blacklist usbhid" >> /etc/modprobe.d/usbhid.conf'
 			sudo update-initramfs -u -k $(uname -r)
 			update-initramfs: Generating /boot/initrd.img-4.15.0-23-generic
+			sudo bash -c 'echo "modprobe -r usb_storage" >> /etc/rc.local'
+			sudo bash -c 'echo "exit 0" >> /etc/rc.local'
+			
+			sudo apt-get install selinux --force-yes -y
+			sudo perl -pi -e 's/.*SELINIX=*/SELINUX=enforcing/g' /etc/selinux/config
+
+			# Lock the /boot partition
+			sudo bash -c 'echo "LABEL=/boot	/boot	ext2	defaults,ro	1 2" >> /etc/fstap'
+			chown root:root /etc/fstab
+			chmod og-rwx /etc/grub.conf
+			sed -i "/SINGLE/s/sushell/sulogin/" /etc/sysconfig/init 
+			sed -i "/PROMPT/s/yes/no/" /etc/sysconfig/init
 
 			sudo unalias -a
 			sudo alias egrep='egrep --color=auto'
@@ -1117,6 +1191,28 @@ function SystemSecurity(){
     # deb-src http://archive.canonical.com/ubuntu precise partner
     deb http://extras.ubuntu.com/ubuntu precise main
     deb-src http://extras.ubuntu.com/ubuntu precise main" > /etc/apt/sources.list
+
+			sudo bash -c 'echo "*	hard	core	0" >> /etc/security/limits.conf'
+			sudo bash -c 'echo "fs.suid_dumpable = 0">> /etc/sysctl.conf'
+			sudo bash -c 'echo "kernel.exec-shield = 1">> /etc/sysctl.conf'
+			sudo bash -c 'echo "kernel.randomize_va_space = 2">> /etc/sysctl.conf'
+			
+			sudo bash -c 'echo "ENABLED = 0">> /etc/default/irqbalance'
+
+			sudo apt-get update
+			sudo apt-get upgrade openssl libssl-dev
+			apt-cache policy openssl libssl-dev
+			sudo apt-get install make
+			curl https://www.openssl.org/source/openssl-1.0.2f.tar.gz | tar xz && cd openssl-1.0.2f && sudo ./config && sudo make && sudo make install
+			sudo ln -sf /usr/local/ssl/bin/openssl `which openssl`
+
+			sudo apt-get install fail2ban --force-yes -y
+			sudo bash -c 'echo "[sshd]">> /etc/fail2ban/jail.conf'
+			sudo bash -c 'echo "enabled = true" >> /etc/fail2ban/jail.conf'
+			sudo bash -c 'echo "port = 22">> /etc/fail2ban/jail.conf'
+			sudo bash -c 'echo "filter == sshd">> /etc/fail2ban/jail.conf'
+			sudo bash -c 'echo "logpath = /var/log/auth.log">> /etc/fail2ban/jail.conf'
+			sudo bash -c 'echo "maxretry = 5">> /etc/fail2ban/jail.conf'
 
 			MainScreen
 			;;
