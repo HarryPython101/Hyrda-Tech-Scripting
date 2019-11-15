@@ -1081,20 +1081,20 @@ function SystemSecurity(){
 		"Y" | "Yes" | "yes" | "y" )
 			# Protect against rubber ducky attacks
 			sudo bash -c 'echo "blacklist usbhid" >> /etc/modprobe.d/usbhid.conf'
-			sudo update-initramfs -u -k $(uname -r)
-			update-initramfs: Generating /boot/initrd.img-4.15.0-23-generic
+			sudo update-initramfs -u -k $(uname -r) --force-yes -y 
+			sudo update-initramfs: Generating /boot/initrd.img-4.15.0-23-generic --force-yes -y
 			sudo bash -c 'echo "modprobe -r usb_storage" >> /etc/rc.local'
 			sudo bash -c 'echo "exit 0" >> /etc/rc.local'
 			
-			sudo apt-get install selinux --force-yes -y
+			sudo apt-get install selinux --force-yes -y 
 			sudo perl -pi -e 's/.*SELINIX=*/SELINUX=enforcing/g' /etc/selinux/config
 
 			# Lock the /boot partition
 			sudo bash -c 'echo "LABEL=/boot	/boot	ext2	defaults,ro	1 2" >> /etc/fstap'
-			chown root:root /etc/fstab
-			chmod og-rwx /etc/grub.conf
-			sed -i "/SINGLE/s/sushell/sulogin/" /etc/sysconfig/init 
-			sed -i "/PROMPT/s/yes/no/" /etc/sysconfig/init
+			sudo chown root:root /etc/fstab
+			sudo chmod og-rwx /etc/grub.conf
+			sudo sed -i "/SINGLE/s/sushell/sulogin/" /etc/sysconfig/init 
+			sudo sed -i "/PROMPT/s/yes/no/" /etc/sysconfig/init
 
 			sudo unalias -a
 			sudo alias egrep='egrep --color=auto'
@@ -1109,8 +1109,8 @@ function SystemSecurity(){
 			sudo alias type='cat'
 			sudo alias apt-get='apt-get'
 
-			apt-get upgrade openssl libssl-dev
-			apt-cache policy openssl libssl-dev
+			sudo apt-get upgrade openssl libssl-dev --force-yes -y
+			sudo apt-cache policy openssl libssl-dev --force-yes -y
 			sudo apt-get install clamav --force-yes -y
 			sudo freshclam >> clam.txt
 			sudo clamscan -r / >> clam.txt
@@ -1128,7 +1128,7 @@ function SystemSecurity(){
 			sudo wget https://bitbucket.org/dave_theunsub/clamtk-gnome/downloads/clamtk-gnome_0.01-1_all.deb
 			sudo gdebi clamtk-gnome_0.01-1_all.deb
 			
-			sudo apt-get install chkrootkit 
+			sudo apt-get install chkrootkit  --force-yes -y
 			sudo chkrootkit >> rootscan.txt
 
 			sudo apt-get install apparmor-utils --force-yes -y
@@ -1141,7 +1141,7 @@ function SystemSecurity(){
 			sudo ecryptfs-setup-swap
 			
 			sudo apt‐get install auditd --force-yes -y
-			auditctl –e 1
+			sudo auditctl –e 1
 			
 			sudo apt-get install tiger --force-yes -yes
 			sudo tiger
@@ -1160,13 +1160,13 @@ function SystemSecurity(){
 			crontab -r
 			cd /etc/
 			/bin/rm -f cron.deny at.deny
-			echo root >cron.allow
-			echo root >at.allow
-			/bin/chown root:root cron.allow at.allow
-			/bin/chmod 400 cron.allow at.allow
+			sudo echo root >cron.allow
+			sudo echo root >at.allow
+			sudo /bin/chown root:root cron.allow at.allow
+			sudo /bin/chmod 400 cron.allow at.allow
 			cd ..
 
-			echo "#deb cdrom:[Ubuntu 12.04.1 LTS _Precise Pangolin_ - Release i386 (20120817.3)]/ precise main restricted
+			sudo echo "#deb cdrom:[Ubuntu 12.04.1 LTS _Precise Pangolin_ - Release i386 (20120817.3)]/ precise main restricted
     deb http://us.archive.ubuntu.com/ubuntu/ precise main restricted
     deb-src http://us.archive.ubuntu.com/ubuntu/ precise main restricted
     deb http://us.archive.ubuntu.com/ubuntu/ precise-updates main restricted
@@ -1199,10 +1199,10 @@ function SystemSecurity(){
 			
 			sudo bash -c 'echo "ENABLED = 0">> /etc/default/irqbalance'
 
-			sudo apt-get update
-			sudo apt-get upgrade openssl libssl-dev
-			apt-cache policy openssl libssl-dev
-			sudo apt-get install make
+			sudo apt-get update --force-yes -y
+			sudo apt-get upgrade openssl libssl-dev --force-yes -y
+			sudo apt-cache policy openssl libssl-dev --force-yes -y
+			sudo apt-get install make --force-yes -y
 			curl https://www.openssl.org/source/openssl-1.0.2f.tar.gz | tar xz && cd openssl-1.0.2f && sudo ./config && sudo make && sudo make install
 			sudo ln -sf /usr/local/ssl/bin/openssl `which openssl`
 
