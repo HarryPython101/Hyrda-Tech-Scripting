@@ -3,7 +3,7 @@
 #Hyrda Tech Scripting
 
 #This script has been created by Eric Mayo exclusively for the use of the Gull Lake High School Cyberpatriot team HydraTech .
-#use of this script by any other teams or people for the cyberpatriot competition is strictly prohibited. If you do so you accept all
+#use of this script by any other teams or people for the cyberpatriot competition is strictly prohibited . If you do so you accept all
 #responsibility for any rule breaches you may cause and the consequences of such. If you wish to use my script as a reference to write
 #your own, that is perfectly acceptable. However I would request that you at least make an effort to understand what they commands
 #do and why they are there before using them.
@@ -812,6 +812,7 @@ function NetWorkSecurity(){
 	case $networkAns in
 
 		"Y" | "Yes" | "yes" | "y" )
+			sudo apt-get install ufw --force-yes -y
 			sudo ufw enable
 			sudo ufw deny 23
 			sudo ufw deny 2049
@@ -908,7 +909,7 @@ function PasswordPolicy(){
 			cracklibExists=$(grep pam_cracklib.so /etc/pam.d/common-password|wc -l)
 
 			if [ $cracklibExists -eq 0 ]; then
-				sudo bash -c 'echo "password requisite pam_cracklib.so retry=3 minlen=8 difok=3 reject_username minclass=3 maxrepeat=2 dcredit=1 ucredit=1 lcredit=1 ocredit=1" >> /etc/pam.d/common-password'
+				sudo bash -c 'echo "password requisite pam_unix.so retry=3 minlen=8 difok=3 reject_username minclass=3 maxrepeat=2 dcredit=1 ucredit=1 lcredit=1 ocredit=1" >> /etc/pam.d/common-password'
 			else
 				sudo perl -pi -e 's/.*pam_cracklib.so.*/password requisite pam_cracklib.so retry=3 minlen=8 difok=3 reject_username minclass=3 maxrepeat=2 dcredit=1 ucredit=1 lcredit=1 ocredit=1/g' /etc/pam.d/common-password
 			fi
